@@ -23,9 +23,6 @@
 #define CRND_HEADER_FILE_ONLY
 #include "crn_decomp.h"
 
-#include "corpus_gen.h"
-#include "corpus_test.h"
-
 using namespace crnlib;
 
 const int cDefaultCRNQualityLevel = 128;
@@ -181,6 +178,7 @@ public:
 
    bool convert(const char* pCommand_line)
    {
+
       m_num_processed = 0;
       m_num_failed = 0;
       m_num_succeeded = 0;
@@ -263,7 +261,6 @@ public:
          { "yflip", 0, false },
          { "unflip", 0, false },
       };
-
       crnlib::vector<command_line_params::param_desc> params;
       params.append(std_params, sizeof(std_params) / sizeof(std_params[0]));
 
@@ -276,13 +273,12 @@ public:
          desc.m_num_values = 0;
          desc.m_support_listing_file = false;
          params.push_back(desc);
-      }
+	  }
 
-      if (!m_params.parse(pCommand_line, params.size(), params.get_ptr(), true))
+      if (!m_params.parse(pCommand_line, params.size(), params.get_ptr(),true))
       {
          return false;
       }
-
       if (!m_params.get_num_params())
       {
          console::error("No command line parameters specified!");
@@ -777,7 +773,6 @@ private:
       {
          int w = m_params.get_value_as_int("rescale", 0, -1, 1, cCRNMaxLevelResolution, 0);
          int h = m_params.get_value_as_int("rescale", 0, -1, 1, cCRNMaxLevelResolution, 1);
-
          mipmap_params.m_scale_mode = cCRNSMAbsolute;
          mipmap_params.m_scale_x = (float)w;
          mipmap_params.m_scale_y = (float)h;
@@ -1261,37 +1256,33 @@ static void print_title()
 
 //-----------------------------------------------------------------------------------------------------------------------
 
-static int main_internal(int argc, char *argv[])
+static int main_internal(int arg, char *argv[])
 {
-   argc;
-   argv;
-
    colorized_console::init();
 
-   if (check_for_option(argc, argv, "quiet"))
+   if (check_for_option(arg, argv, "quiet"))
       console::disable_output();
 
    print_title();
 
    dynamic_string cmd_line;
-   get_command_line_as_single_string(cmd_line, argc, argv);
+   cmd_line.clear();
+   for (int i = 0; i < arg; i++)
+   {
+	   dynamic_string tmp(argv[i]);
+	   if ((tmp.front() != '"') && (tmp.front() != '-') && (tmp.front() != '@'))
+		   tmp = "\"" + tmp + "\"";
+	   if (cmd_line.get_len())
+		   cmd_line += " ";
+	   cmd_line += tmp;
+   }
+   //get_command_line_as_single_string(cmd_line, arg, argv);
 
    bool status = false;
-   if (check_for_option(argc, argv, "corpus_gen"))
-   {
-      corpus_gen generator;
-      status = generator.generate(cmd_line.get_ptr());
-   }
-   else if (check_for_option(argc, argv, "corpus_test"))
-   {
-      corpus_tester tester;
-      status = tester.test(cmd_line.get_ptr());
-   }
-   else
-   {
-      crunch converter;
-      status = converter.convert(cmd_line.get_ptr());
-   }
+
+   crunch converter;
+   status = converter.convert(cmd_line.get_ptr());
+
 
    colorized_console::deinit();
 
@@ -1321,14 +1312,16 @@ int main(int argc, char *argv[])
 
    if (crnlib_is_debugger_present())
    {
-      status = main_internal(argc, argv);
+	   status = main_internal(argc, argv);
    }
    else
    {
 #ifdef _MSC_VER
+
       __try
       {
-         status = main_internal(argc, argv);
+
+		  status = main_internal(argc, argv);
       }
       __except(EXCEPTION_EXECUTE_HANDLER)
       {
@@ -1343,6 +1336,7 @@ int main(int argc, char *argv[])
 
    if (check_for_option(argc, argv, "pause"))
    {
+	   printf("pause");
       if ((status == EXIT_FAILURE) || (console::get_num_messages(cErrorConsoleMessage)))
          pause_and_wait();
    }

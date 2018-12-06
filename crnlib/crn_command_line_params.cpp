@@ -46,6 +46,7 @@ namespace crnlib
 
    bool command_line_params::split_params(const char* p, dynamic_string_array& params)
    {
+
       bool within_param = false;
       bool within_quote = false;
 
@@ -250,6 +251,7 @@ namespace crnlib
       CRNLIB_ASSERT(n && pParam_desc);
 
       dynamic_string_array p;
+
       if (!split_params(pCmd_line, p))
          return 0;
 
@@ -258,6 +260,8 @@ namespace crnlib
 
       if (skip_first_param)
          p.erase(0U);
+
+	  //printf("ParamsTest:%s\n", p[1].c_str());
 
       return parse(p, n, pParam_desc);
    }

@@ -72,7 +72,7 @@ void crnlib_debug_break(void)
 
 bool crnlib_is_debugger_present(void)
 {
-   return IsDebuggerPresent() != 0;
+	   return IsDebuggerPresent() != 0;
 }
 
 void crnlib_output_debug_string(const char* p)

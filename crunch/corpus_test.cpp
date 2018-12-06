@@ -195,6 +195,7 @@ namespace crnlib
       };
 
       command_line_params cmd_line_params;
+
       if (!cmd_line_params.parse(pCmd_line, CRNLIB_ARRAY_SIZE(param_desc_array), param_desc_array, true))
          return false;
 
