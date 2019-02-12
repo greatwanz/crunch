@@ -408,7 +408,6 @@ public:
 		status = converter.convert(cmd_line.get_ptr());
 
 		colorized_console::deinit();
-
 		crnlib_print_mem_stats();
 
 		return status ? EXIT_SUCCESS : EXIT_FAILURE;

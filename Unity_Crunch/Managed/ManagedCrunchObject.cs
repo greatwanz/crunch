@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using UnityEngine;
+using System.Threading;
 
 namespace WS
 {
@@ -16,9 +19,15 @@ namespace WS
             ManagedCrunchWrapper.delete_CrunchObject(native_instance_);
         }
 
-        public void compress(string filepath, int width = 0, int height = 0)
+        public IEnumerator compress(string filepath, int width = 0, int height = 0)
         {
-            ManagedCrunchWrapper.compress(native_instance_, filepath, width, height);
+            var awaiter = new WaitForThread();
+            ThreadPool.QueueUserWorkItem(state =>
+                {
+                    ManagedCrunchWrapper.compress(native_instance_, filepath, width, height);
+                    awaiter.OnDone();
+                });
+            yield return awaiter;
         }
 
         public IntPtr decompress(string filepath)
