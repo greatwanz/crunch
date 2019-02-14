@@ -1,3 +1,5 @@
+A fork of Unity crunch compressor that allows for compression and decompression of textures at runtime. Managed folder in Unity_Crunch contains wrapper classes that can be used in Unity and C#.
+
 crunch/crnlib v1.04 - Advanced DXTn texture compression library
 Copyright (C) 2010-2017 Richard Geldreich, Jr. and Binomial LLC http://binomial.info 
 
